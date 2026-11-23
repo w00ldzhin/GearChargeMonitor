@@ -1,11 +1,12 @@
-﻿using System;
+﻿using GearChargeMonitor.Models;
+using GearChargeMonitor.Services;
+using H.NotifyIcon;
+using System;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
-using GearChargeMonitor.Models;
-using GearChargeMonitor.Services;
-using H.NotifyIcon;
 
 namespace GearChargeMonitor
 {
@@ -17,6 +18,7 @@ namespace GearChargeMonitor
         private TaskbarIcon? _trayIcon;
         private readonly HidExplore _hidExplore = new();
         private readonly IconGeneratorService _iconGenerator = new();
+        private readonly AutoStartService _autoStartService = new();
         private DispatcherTimer? _timer;
         private int? _lastKnownPercent;
 
@@ -27,6 +29,12 @@ namespace GearChargeMonitor
             _trayIcon = (TaskbarIcon)FindResource("TrayIcon");
             SetTrayIcon("..", Color.White);
             _trayIcon.ForceCreate();
+
+            if (_trayIcon.ContextMenu?.Items.OfType<MenuItem>()
+              .FirstOrDefault(m => m.Name == "AutoStartMenuItem") is MenuItem autoStartItem)
+            {
+                autoStartItem.IsChecked = _autoStartService.IsEnabled();
+            }
 
             _timer = new DispatcherTimer
             {
@@ -93,6 +101,20 @@ namespace GearChargeMonitor
             await UpdateBatteryStatusAsync();
         }
 
+        private void AutoStartMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                if (menuItem.IsChecked)
+                {
+                    _autoStartService.Enable();
+                }
+                else
+                {
+                    _autoStartService.Disable();
+                }
+            }
+        }
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
         {
             _timer?.Stop();
