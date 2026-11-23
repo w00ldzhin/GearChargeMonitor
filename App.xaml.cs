@@ -64,17 +64,17 @@ namespace GearChargeMonitor
             if (info == null)
             {
                 SetTrayIcon("?", Color.Gray);
-                _trayIcon.ToolTipText = "Донгл не найден";
+                _trayIcon.ToolTipText = "Cant find dongle";
                 return;
             }
 
             if (info.isAsleep)
             {
                 string iconText = _lastKnownPercent.HasValue ? _lastKnownPercent.Value.ToString() : "?";
-                string tipText = _lastKnownPercent.HasValue ? $"{_lastKnownPercent}%" : "неизвестно";
+                string tipText = _lastKnownPercent.HasValue ? $"{_lastKnownPercent}%" : "unknown";
 
                 SetTrayIcon(iconText, Color.Gray);
-                _trayIcon.ToolTipText = $"{info.Name}: {tipText} (спит)";
+                _trayIcon.ToolTipText = $"{info.Name}: {tipText} (sleeping)";
                 return;
             }
 
@@ -92,7 +92,7 @@ namespace GearChargeMonitor
 
             SetTrayIcon(info.BatteryPercent.ToString(), textColor);
             _trayIcon.ToolTipText = info.isCharging
-                ? $"{info.Name}: {info.BatteryPercent}%  (заряжается)"
+                ? $"{info.Name}: {info.BatteryPercent}%  (charging)"
                 : $"{info.Name}: {info.BatteryPercent}%";
         }
 

@@ -9,13 +9,13 @@
                         ToolTipText="GearChargeMonitor: загрузка...">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Обновить" Click="RefreshMenuItem_Click" />
+                    <MenuItem Header="Update" Click="RefreshMenuItem_Click" />
                     <MenuItem x:Name="AutoStartMenuItem"
-                              Header="Автозапуск с Windows"
+                              Header="Run at startup"
                               IsCheckable="True"
                               Click="AutoStartMenuItem_Click" />
                     <Separator />
-                    <MenuItem Header="Выход" Click="ExitMenuItem_Click" />
+                    <MenuItem Header="Exit" Click="ExitMenuItem_Click" />
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
