@@ -1,11 +1,11 @@
-﻿using GearChargeMonitor.Models;
+﻿using System;
+using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
+using GearChargeMonitor.Models;
 using GearChargeMonitor.Services;
 using H.NotifyIcon;
-using System.Configuration;
-using System.Data;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace GearChargeMonitor
 {
@@ -14,20 +14,18 @@ namespace GearChargeMonitor
     /// </summary>
     public partial class App : Application
     {
-
         private TaskbarIcon? _trayIcon;
         private readonly HidExplore _hidExplore = new();
+        private readonly IconGeneratorService _iconGenerator = new();
         private DispatcherTimer? _timer;
         private int? _lastKnownPercent;
-
-        private readonly BitmapImage _normalIcon = new(new Uri("pack://application:,,,/Assets/mouse.ico"));
-        private readonly BitmapImage _chargingIcon = new(new Uri("pack://application:,,,/Assets/mouse_charging.ico"));
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             _trayIcon = (TaskbarIcon)FindResource("TrayIcon");
+            SetTrayIcon("..", Color.White);
             _trayIcon.ForceCreate();
 
             _timer = new DispatcherTimer
@@ -40,6 +38,15 @@ namespace GearChargeMonitor
             await UpdateBatteryStatusAsync();
         }
 
+        private void SetTrayIcon(string text, Color color)
+        {
+            if (_trayIcon == null) return;
+
+            Icon? oldIcon = _trayIcon.Icon;
+            _trayIcon.Icon = _iconGenerator.CreateTextIcon(text, color);
+            oldIcon?.Dispose();
+        }
+
         private async Task UpdateBatteryStatusAsync()
         {
             if (_trayIcon == null) return;
@@ -48,31 +55,37 @@ namespace GearChargeMonitor
 
             if (info == null)
             {
-                _trayIcon.IconSource = _normalIcon;
-                _trayIcon.ToolTipText = "Redragon Impact Elite: донгл не найден";
+                SetTrayIcon("?", Color.Gray);
+                _trayIcon.ToolTipText = "Донгл не найден";
                 return;
             }
 
             if (info.isAsleep)
             {
-                _trayIcon.IconSource = _normalIcon;
-                string lastPercentText = _lastKnownPercent.HasValue ? $"{_lastKnownPercent}%" : "неизвестно";
-                _trayIcon.ToolTipText = $"{info.Name}: {lastPercentText} (спит)";
+                string iconText = _lastKnownPercent.HasValue ? _lastKnownPercent.Value.ToString() : "?";
+                string tipText = _lastKnownPercent.HasValue ? $"{_lastKnownPercent}%" : "неизвестно";
+
+                SetTrayIcon(iconText, Color.Gray);
+                _trayIcon.ToolTipText = $"{info.Name}: {tipText} (спит)";
                 return;
             }
 
             _lastKnownPercent = info.BatteryPercent;
 
+            Color textColor = Color.White;
             if (info.isCharging)
             {
-                _trayIcon.IconSource = _chargingIcon;
-                _trayIcon.ToolTipText = $"{info.Name}: {info.BatteryPercent}% ⚡ (заряжается)";
+                textColor = Color.LightGreen;
             }
-            else
+            else if (info.BatteryPercent <= 20)
             {
-                _trayIcon.IconSource = _normalIcon;
-                _trayIcon.ToolTipText = $"{info.Name}: {info.BatteryPercent}%";
+                textColor = Color.OrangeRed;
             }
+
+            SetTrayIcon(info.BatteryPercent.ToString(), textColor);
+            _trayIcon.ToolTipText = info.isCharging
+                ? $"{info.Name}: {info.BatteryPercent}%  (заряжается)"
+                : $"{info.Name}: {info.BatteryPercent}%";
         }
 
         private async void RefreshMenuItem_Click(object sender, RoutedEventArgs e)
@@ -83,6 +96,7 @@ namespace GearChargeMonitor
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
         {
             _timer?.Stop();
+            _trayIcon?.Icon?.Dispose();
             _trayIcon?.Dispose();
             Shutdown();
         }

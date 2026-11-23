@@ -9,11 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <None Remove="Models\icons8-батарея-средней-зарядки-32.ico" />
+    <None Remove="Models\icons8-мышь-32.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />
     <PackageReference Include="HidSharp" Version="2.6.4" />
+    <PackageReference Include="System.Drawing.Common" Version="11.0.0" />
   </ItemGroup>
 
 </Project>

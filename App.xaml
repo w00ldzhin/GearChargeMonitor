@@ -5,10 +5,14 @@
             xmlns:tb="clr-namespace:H.NotifyIcon;assembly=H.NotifyIcon.Wpf"
             ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
-        <tb:TaskbarIcon x:Key="TrayIcon" IconSource="/Assets/mouse.ico" ToolTipText="Загрузка..." >
+        <tb:TaskbarIcon x:Key="TrayIcon"
+                        ToolTipText="GearChargeMonitor: загрузка...">
             <tb:TaskbarIcon.ContextMenu>
-                <MenuItem Header="Обновить" />
-                <MenuItem Header="Выход" />
+                <ContextMenu>
+                    <MenuItem Header="Обновить" Click="RefreshMenuItem_Click" />
+                    <Separator />
+                    <MenuItem Header="Выход" Click="ExitMenuItem_Click" />
+                </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
     </Application.Resources>
