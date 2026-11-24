@@ -15,6 +15,7 @@ A simple Windows tray app to check the battery level of my wireless mouse withou
 
 ## Supported devices
 * **Redragon Impact Elite (M913)** - 2.4G dongle (`VID: 25A7`, `PID: FA07`)
+* **Red Square IO x VXE R1 SE+** - 2.4G dongle (`VID: 0x373B`, `PID: 0x1085`)
 
 *(I plan to add Bluetooth devices like headphones and gamepads later)*
 
