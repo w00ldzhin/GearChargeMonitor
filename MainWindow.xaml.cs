@@ -17,12 +17,13 @@ namespace GearChargeMonitor
     /// </summary>
     public partial class MainWindow : Window
     {
-        HidExplore hidExplore = new HidExplore();
+ 
         public MainWindow()
         {
             InitializeComponent();
             
-           hidExplore.FindDongleInterfaces();
+         
+            
         }
 
       

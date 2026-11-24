@@ -15,6 +15,7 @@ namespace GearChargeMonitor
     /// </summary>
     public partial class App : Application
     {
+        HidExplore hidExplore = new HidExplore();
         private TaskbarIcon? _trayIcon;
         private readonly HidExplore _hidExplore = new();
         private readonly IconGeneratorService _iconGenerator = new();
